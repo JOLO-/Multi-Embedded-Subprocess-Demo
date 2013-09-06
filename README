@@ -1,0 +1,1 @@
+This demo illustrate that embedded subprocess runs in the same thread that the global subprocess.
