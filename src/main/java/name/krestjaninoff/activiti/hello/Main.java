@@ -45,13 +45,10 @@ public class Main {
         launchVancySubprocesses();
         ckeckMainProcessLaunch();
 
-
         //start two subprocesses for each vacancy subprocess
-        startCandidateSubprocess(processInstances.get(0).getId(), CANDIDATE_PROCESS_AMOUNT);
-        startCandidateSubprocess(processInstances.get(1).getId(), CANDIDATE_PROCESS_AMOUNT);
+        startCandidateSubprocess(CANDIDATE_PROCESS_AMOUNT);
 
-        checkSubprocessLaunch(processInstances.get(0).getProcessInstanceId());
-        checkSubprocessLaunch(processInstances.get(1).getProcessInstanceId());
+        checkSubprocessLaunch();
     }
 
     /**
@@ -85,23 +82,14 @@ public class Main {
      * @param vacancyProcessId id of the process from which we will start subprocesses
      * @param subprocessAmount amount of subprocesses
      */
-    private static void startCandidateSubprocess(String vacancyProcessId, int subprocessAmount) {
-        //find the needed execution, to which we address the signal
-        List<Execution> executions = runtimeService.createExecutionQuery().signalEventSubscriptionName("launchCandidateSubprocess").list();
-        Execution execution = null;
-        for (int i = 0; i < executions.size(); i++)
-            if (executions.get(i).getProcessInstanceId().equals(vacancyProcessId))
-                execution = executions.get(i);
-
-        //launch the CANDIDATE_PROCESS_AMOUNT candidates subprocesses fir first
-        for (int i = 0; i < subprocessAmount; i++) {
-            runtimeService.signalEventReceived("launchCandidateSubprocess", execution.getId());
-        }
+    private static void startCandidateSubprocess(int subprocessAmount) {
+        for (int i = 0; i < subprocessAmount; i++)
+            runtimeService.startProcessInstanceByKey("candidateProcess");
     }
 
-    private static void checkSubprocessLaunch(String vacancyProcessId) {
-        List<Task> tasks = taskService.createTaskQuery().processInstanceId(vacancyProcessId).list();
-        if (tasks.size() != CANDIDATE_PROCESS_AMOUNT + 1)
-            throw new IllegalStateException("there are " + tasks.size() + " tasks, but should be " + (CANDIDATE_PROCESS_AMOUNT + 1));
+    private static void checkSubprocessLaunch() {
+        int startedProcAmount = runtimeService.createProcessInstanceQuery().list().size();
+        if (startedProcAmount != CANDIDATE_PROCESS_AMOUNT + VACANCY_PROCESS_AMOUNT)
+            throw new IllegalStateException("there are " + startedProcAmount + " tasks, but should be " + (CANDIDATE_PROCESS_AMOUNT + VACANCY_PROCESS_AMOUNT));
     }
 }

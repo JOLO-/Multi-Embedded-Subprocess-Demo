@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+
+
+    <process id="candidateProcess" isExecutable="true">
+        <extensionElements>
+            <activiti:executionListener class="org.bpmnwithactiviti.chapter6.listener.StartCandidateSubprocessListener" event="start"/>
+        </extensionElements>
+        <startEvent id="candidateSubProcessStart" name="Start"></startEvent>
+        <sequenceFlow id="flow5" sourceRef="candidateSubProcessStart" targetRef="addCandidate"></sequenceFlow>
+        <serviceTask id="addCandidate" name="Add candidate" activiti:class="name.krestjaninoff.activiti.hello.process.AddCandidateService"></serviceTask>
+        <sequenceFlow id="flow6" sourceRef="addCandidate" targetRef="approveCandidate"></sequenceFlow>
+        <userTask id="approveCandidate" name="Employ employee"></userTask>
+        <sequenceFlow id="flow7" sourceRef="approveCandidate" targetRef="candidateSubprocessEnd"></sequenceFlow>
+        <endEvent id="candidateSubprocessEnd" name="End"></endEvent>
+    </process>
+</definitions>

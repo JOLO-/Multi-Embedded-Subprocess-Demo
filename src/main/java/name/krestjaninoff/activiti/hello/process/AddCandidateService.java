@@ -12,6 +12,7 @@ public class AddCandidateService implements JavaDelegate {
 
         for(int i = 0; i < Integer.MAX_VALUE; i++) {
             System.out.println(execution.getProcessDefinitionId() + ":" + execution.getProcessInstanceId() + "\t" + execution.getCurrentActivityName() + "\t " + i);
+            Thread.yield();
             if (i % 10 == 0)
                 Thread.currentThread().sleep(1000);
         }
